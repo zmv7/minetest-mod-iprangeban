@@ -1,15 +1,16 @@
 local stor = core.get_mod_storage()
 
+local to_x = function(pat)
+	return (pat and pat:gsub("%%d%+","X") or "error")
+end
+
 core.register_on_prejoinplayer(function(name,ip)
 	local stor_table = stor:to_table()
 	local list = stor_table and stor_table.fields
 	if not (name and ip and list) then return end
 	for pat,descr in pairs(list) do
 		if ip:match(pat) then
-			if descr and descr ~= "dummy" then
-				pat = pat..". Reason: "..descr
-			end
-			return "Your IP ("..ip..") included in banned IP range: "..pat
+			return "Your IP ("..ip..") included in banned IP range: "..to_x(pat)..(descr and descr ~= "dummy" and " ("..descr..")" or "")
 		end
 	end
 end)
@@ -28,10 +29,7 @@ core.register_chatcommand("ipban",{
 			if not list then return end
 			local out = {}
 			for pat,descr in pairs(list) do
-				if descr and descr ~= "dummy" then
-					pat = pat.."("..descr..")"
-				end
-				table.insert(out, pat)
+				table.insert(out, to_x(pat)..(descr and descr ~= "dummy" and "("..descr..")" or ""))
 			end
 			table.sort(out)
 			return true, "List of patterns: "..table.concat(out,", ")
@@ -51,13 +49,13 @@ core.register_chatcommand("ipban",{
 		end
 		pattern[i] = seg
 	end
-	local patstring = table.concat(pattern,".")
+	local pat = table.concat(pattern,".")
 	if action == "add" then
-		stor:set_string(patstring,descr)
-		return true, "Added pattern: "..patstring
+		stor:set_string(pat,descr)
+		return true, "Added pattern: "..to_x(pat)
 	end
 	if action == "rm" then
-		stor:set_string(patstring,"")
-		return true, "Removed pattern: "..patstring
+		stor:set_string(pat,"")
+		return true, "Removed pattern: "..to_x(pat)
 	end
 end})
