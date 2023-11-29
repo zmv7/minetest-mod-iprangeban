@@ -18,7 +18,7 @@ end)
 core.register_chatcommand("ipban",{
   description = "IP range banner",
   privs = {server=true},
-  params = "<add|rm> <IP part> [description] | <ls>",
+  params = "[<add> | <rm> <IP pattern> [description]] | <ls>",
   func = function(name,param)
 	local action, ip_descr = param:match("^(%S+) (.+)$")
 	if not (action and ip_descr) then
