@@ -1,11 +1,11 @@
-local stor = core.get_mod_storage()
+local s = core.get_mod_storage()
 
 local to_x = function(pat)
 	return (pat and pat:gsub("%%d%+","X") or "error")
 end
 
 core.register_on_prejoinplayer(function(name,ip)
-	local stor_table = stor:to_table()
+	local stor_table = s:to_table()
 	local list = stor_table and stor_table.fields
 	if not (name and ip and list) then return end
 	for pat,descr in pairs(list) do
@@ -24,7 +24,7 @@ core.register_chatcommand("ipban",{
 	if not (action and ip_descr) then
 		action = param
 		if action == "ls" then
-			local stor_table = stor:to_table()
+			local stor_table = s:to_table()
 			local list = stor_table and stor_table.fields
 			if not list then return end
 			local out = {}
@@ -51,11 +51,11 @@ core.register_chatcommand("ipban",{
 	end
 	local pat = table.concat(pattern,".")
 	if action == "add" then
-		stor:set_string(pat,descr)
+		s:set_string(pat,descr)
 		return true, "Added pattern: "..to_x(pat)
 	end
 	if action == "rm" then
-		stor:set_string(pat,"")
+		s:set_string(pat,"")
 		return true, "Removed pattern: "..to_x(pat)
 	end
 end})
